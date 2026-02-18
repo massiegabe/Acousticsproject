@@ -1,1 +1,7 @@
 __pycache__
+.config
+.local
+.dbus
+.ssl
+.XDG
+.sfepy
