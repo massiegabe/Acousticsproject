@@ -1,0 +1,7 @@
+services:
+  sfepy:
+    image: sfepy/sfepy-desktop:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/home/sfepy/work
