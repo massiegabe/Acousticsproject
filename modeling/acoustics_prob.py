@@ -10,7 +10,8 @@ def get_r_dependence(ts, coors, mode=None, **kwargs):
         val.shape = (coors.shape[0], 1, 1)
         return {'val' : val}
 
-filename_mesh = 'tmp/mesh.vtk'
+filename_mesh = 'gabe2_openclosed.msh'
+#filename_mesh = 'tmp/mesh.vtk'
 
 options = {
     'save_eig_vectors' : None,
