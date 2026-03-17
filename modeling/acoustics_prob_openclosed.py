@@ -18,31 +18,47 @@ def get_r_dependence(ts, coors, mode=None, **kwargs):
         return {'val': val}
 
 
+# Region selector functions (coordinate-based, robust across SfePy versions)
+def axis_verts(coors, domain=None):
+    return np.where(coors[:, 1] < 1e-10)[0]
+
+def open_verts(coors, domain=None):
+    return np.where(coors[:, 0] > 0.569)[0]
+
+def wall_verts(coors, domain=None):
+    return np.where(coors[:, 1] > 0.0349)[0]
+
+def closed_verts(coors, domain=None):
+    return np.where(coors[:, 0] < 1e-10)[0]
+
+
 # Mesh file
-filename_mesh = 'gabe2_openclosed.msh'
+filename_mesh = 'gabe2_openclosed_2d.mesh'
 
 
 # Options
 options = {
-    'save_eig_vectors': True,
-    'eigen_solver': 'eig',
+    'evps': 'eig',
     'n_eigs': 12,
-    'post_process_hook': 'print_frequencies',
+    'post_process_hook_final': 'print_frequencies',
 }
 
 # Regions
 regions = {
     'Omega'  : 'all',
-
-    'Axis'   : ('vertices of group 2',),
-    'Open'   : ('vertices of group 3',),
-    'Wall'   : ('vertices of group 4',),
-    'Closed' : ('vertices of group 5',),
+    'Axis'   : 'cells of group 2',
+    'Open'   : 'cells of group 3',
+    'Wall'   : 'cells of group 4',
+    'Closed' : 'cells of group 5',
 }
 
 # Functions,materials
 functions = {
     'get_r_dependence': (get_r_dependence,),
+    'axis_verts':       (axis_verts,),
+    'open_verts':       (open_verts,),
+    'wall_verts':       (wall_verts,),
+    'closed_verts':     (closed_verts,),
 }
 
 materials = {
@@ -106,9 +122,9 @@ solvers = {
 
 
 # Frequencies
-def print_frequencies(problem, evp_results, state=None, extend=False):
+def print_frequencies(problem, evp=None, **kwargs):
 
-    eigs = evp_results.eigs
+    eigs = evp.eigs
 
     print("\n====================================")
     print("Eigenvalues and Frequencies")
@@ -128,4 +144,4 @@ def print_frequencies(problem, evp_results, state=None, extend=False):
 
     print("\n====================================\n")
 
-    return state
+    return evp
