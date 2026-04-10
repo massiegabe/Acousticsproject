@@ -1,26 +1,15 @@
 Mesh.MshFileVersion = 2.2;
 
 // Geometry parameters
-L = 0.57;     // length (m)
+L = 0.43973837948;     // length (m)
 R = 0.035;    // radius (m)
 lc = 0.005;   // mesh size
-LE = 0.285485;
-RE = 0.294525;
-TE = 0.006425;
-BE = 0.028575;
+
 // Points
 Point(1) = {0, 0, 0, lc};
 Point(2) = {L, 0, 0, lc};
 Point(3) = {L, R, 0, lc};
 Point(4) = {0, R, 0, lc};
-Point(5) = {LE,R,0,lc};
-Point(6) = {LE,0.006425,0,lc};
-Point(7) = {RE,R,0,lc};
-Point(8) = {RE,0.006425,0,lc};
-Point(9) = {RE,0,0,lc};
-Point(10) = {RE,BE,0,lc};
-Point(11) = {RE,0,0,lc};
-Point(12) = {RE,BE,0,lc};
 
 // Lines
 Line(1) = {1,2}; // axis
@@ -28,11 +17,11 @@ Line(2) = {2,3}; // open end
 Line(3) = {3,4}; // wall
 Line(4) = {4,1}; // closed end
 
-
 // Surface
 Curve Loop(1) = {1,2,3,4};
 Plane Surface(1) = {1};
 
+// Physical groups (VERY IMPORTANT for SfePy)
 Physical Surface("Omega") = {1};
 
 Physical Curve("Axis")   = {1};
@@ -40,6 +29,7 @@ Physical Curve("Open")   = {2};
 Physical Curve("Wall")   = {3};
 Physical Curve("Closed") = {4};
 
+// Mesh
 Transfinite Curve {1,3} = 200;
 Transfinite Curve {2,4} = 30;
 Transfinite Surface {1};

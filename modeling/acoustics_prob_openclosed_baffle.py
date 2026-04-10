@@ -18,7 +18,9 @@ def get_r_dependence(ts, coors, mode=None, **kwargs):
         return {'val': val}
 
 
-# Region selector functions (coordinate-based, robust across SfePy versions)
+# ------------------------------------------------------------
+# Region selector functions
+# ------------------------------------------------------------
 def axis_verts(coors, domain=None):
     return np.where(coors[:, 1] < 1e-10)[0]
 
@@ -31,34 +33,62 @@ def wall_verts(coors, domain=None):
 def closed_verts(coors, domain=None):
     return np.where(coors[:, 0] < 1e-10)[0]
 
+def baffle_verts(coors, domain=None):
+    """
+    Select vertical baffle faces.
+    MUST match geometry parameters in.geo file.
+    """
+    lambda_val = 0.43973837948     # <-- same as .geo
+    xb = 0.75 * 0.43973837948  # 3/2 lambda location
+    t = 0.02               # 2 cm thickness
+    y_gap = 0.006425       # opening height
 
+    return np.where(
+        (coors[:, 0] > xb - t/2 - 1e-4) &
+        (coors[:, 0] < xb + t/2 + 1e-4) &
+        (coors[:, 1] > y_gap)
+    )[0]
+
+
+# ------------------------------------------------------------
 # Mesh file
-filename_mesh = 'newtubenobaffle_2d.mesh'
+# ------------------------------------------------------------
+filename_mesh = 'new_tube_2d.mesh'
 
 
+# ------------------------------------------------------------
 # Options
+# ------------------------------------------------------------
 options = {
     'evps': 'eig',
     'n_eigs': 12,
     'post_process_hook_final': 'print_frequencies',
 }
 
+
+# ------------------------------------------------------------
 # Regions
+# ------------------------------------------------------------
 regions = {
     'Omega'  : 'all',
     'Axis'   : 'cells of group 2',
     'Open'   : 'cells of group 3',
     'Wall'   : 'cells of group 4',
     'Closed' : 'cells of group 5',
+    'Baffle' : ('vertices by baffle_verts', 'facet'),
 }
 
-# Functions,materials
+
+# ------------------------------------------------------------
+# Functions, materials
+# ------------------------------------------------------------
 functions = {
     'get_r_dependence': (get_r_dependence,),
     'axis_verts':       (axis_verts,),
     'open_verts':       (open_verts,),
     'wall_verts':       (wall_verts,),
     'closed_verts':     (closed_verts,),
+    'baffle_verts':     (baffle_verts,),
 }
 
 materials = {
@@ -66,34 +96,44 @@ materials = {
 }
 
 
+# ------------------------------------------------------------
 # Field
+# ------------------------------------------------------------
 fields = {
     'pressure': ('real', 'scalar', 'Omega', 1),
 }
 
 
+# ------------------------------------------------------------
 # Variables
+# ------------------------------------------------------------
 variables = {
     'Psi': ('unknown field', 'pressure', 0),
     'v': ('test field', 'pressure', 'Psi'),
 }
 
 
+# ------------------------------------------------------------
 # Boundary conditions
+# ------------------------------------------------------------
 # Open end = pressure = 0
-# Closed end = natural Neumann
+# Walls + Baffle = natural Neumann (do nothing)
 ebcs = {
     'open_bc': ('Open', {'Psi.0': 0.0}),
 }
 
 
+# ------------------------------------------------------------
 # Integral
+# ------------------------------------------------------------
 integrals = {
     'i': 2,
 }
 
 
+# ------------------------------------------------------------
 # Equations
+# ------------------------------------------------------------
 equations = {
 
     'lhs':
@@ -108,7 +148,9 @@ equations = {
 }
 
 
+# ------------------------------------------------------------
 # Solver
+# ------------------------------------------------------------
 solvers = {
 
     'eig': ('eig.scipy', {
@@ -121,7 +163,9 @@ solvers = {
 }
 
 
+# ------------------------------------------------------------
 # Frequencies
+# ------------------------------------------------------------
 def print_frequencies(problem, evp=None, **kwargs):
 
     eigs = evp.eigs
