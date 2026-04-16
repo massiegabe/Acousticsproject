@@ -1,1 +1,9 @@
 /sfepy-docker
+*.msh
+*.vtk
+*.mesh
+.claude
+*eigs.txt
+
+
+

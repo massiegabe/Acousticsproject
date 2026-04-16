@@ -1,3 +1,6 @@
+Mesh.PartitionOldStyleMsh2 = 1;
+Mesh.PartitionCreateGhostCells = 1;
+
 cl1 = 5;
 cl2 = 1;
 
