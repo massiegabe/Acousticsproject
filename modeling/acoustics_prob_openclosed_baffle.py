@@ -38,10 +38,10 @@ def baffle_verts(coors, domain=None):
     Select vertical baffle faces.
     MUST match geometry parameters in.geo file.
     """
-    lambda_val = 0.43973837948     # <-- same as .geo
-    xb = 0.75 * 0.43973837948  # 3/2 lambda location
-    t = 0.02               # 2 cm thickness
-    y_gap = 0.006425       # opening height
+    lambda_val = 439.73837948     # <-- same as .geo
+    xb = 0.75 * 439.73837948  # 3/2 lambda location
+    t = 10              # thickness
+    y_gap = 2.86      # opening height
 
     return np.where(
         (coors[:, 0] > xb - t/2 - 1e-4) &
