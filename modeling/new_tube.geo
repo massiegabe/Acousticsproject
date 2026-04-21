@@ -1,19 +1,19 @@
 Mesh.MshFileVersion = 2.2;
 
 // Geometry parameters
-L = 439.73837948;     // tube length (m)
-R = (25.4);    // radius (m)
+L = 439.73837948/1000;     // tube length (mm)
+R = (50.125/2)/1000;    // radius (mm)
 lc = 0.005;   // mesh size
 
 // --- Wavelength ) ---
-// Baffle thickness (m)
-t = 10; 
+// Baffle thickness (mm)
+t = 10/1000; 
 
 // Baffle position (3/2 lambda from left end)
 xb = 0.75 * L;
 
 // Baffle vertical extent 
-y_gap = (2.86);
+y_gap = (15)/1000;
 
 // --- Points ---
 // Tube corners
