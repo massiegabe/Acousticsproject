@@ -4,21 +4,23 @@
 \usepackage{amsmath}    % From the American Mathematical Society
 \usepackage{hyperref}
 \usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{colortbl}
+\usepackage[table,xcdraw]{xcolor}
 \addbibresource{refs.bib}
 % Your document starts here!
 \begin{document}
 
 % Define document title and author
-	\title{Acoustic Resonance}
-	\author{Gabriel Massie
+	\title{Investigating Acoustic Modes of Vibration in Cylindrical Geometries}
+	\author{Gabriel Massie}
 	\thanks{Advisor:~Spicklemire, Stephen J.}}
-	\markboth{Senior Research, report 1}{}
+	\markboth{Senior Research}{}
 	\maketitle
 
 % Write abstract here
 \begin{abstract}
-(\textit{Use this template for your report.}) Replace this section with your abstract. An abstract is a short (50--80 words, roughly) paragraph intended to give the reader a {\it brief} overview of the work and the relevant results. The abstract is what the reader will use to decide whether it's worth their time to read your paper. Make the abstract short, but interesting! You want to draw the reader in. If they don't read your paper, then it will have been a waste of your time.
-\end{abstract}
+We developed models of acoustical modes of vibration in cylindrical geometries and measured their behavior experimentally. Both Neumann and Dirichlet boundary conditions were investigated. As well as geometric perturbations that affected the resonant frequencies. Analytical, computational and experimental results will be shared\end{abstract}
 
 % Each section begins with a \section{title} command
 \section{Introduction}
@@ -26,17 +28,121 @@
 	\IEEEPARstart{T}{his} section describes the physical context of the investigation, and research question to be answered and some insight into the motivation for the investigation. Like the abstract, the introduction should provide some incentive for them to \textit{keep} reading. Why is this work interesting? Why is it important? What novel approach did you take? You might hint at the fascinating results you produced, or the creative way you dealt with experimental challenges.
 % Theory and Background
 \section{Theory and Background}
-	% LaTeX takes complete care of your document layout ...
-	This is where you provide references to background information or theory that the reader might need to understand your project. This could include textbook references or other resources. Anything you don't work out here, but that you need for to complete the analysis, should be referenced.
+	\section{Theory and Background}
 
+Standing waves in air columns come from the interference of incident and reflected pressure waves under specific boundary conditions. In a cylinder, the boundary conditions are determined by whether the ends are open or closed. A closed end enforces a displacement node (velocity node) due to the restriction of the air, while an open end enforces a displacement antinode (pressure node) where the air is free to oscillate.
+
+\subsection{Standing Waves in an Open-Closed Tube}
+
+For a tube of length $L$ with one end closed and the other open, the standing wave modes satisfy
+\begin{equation}
+L = \frac{(2n - 1)\lambda}{4}, \quad n = 1,2,3,\dots
+\end{equation}
+where $\lambda$ is the wavelength of the sound wave. This condition arises because the wave must have a node at the closed end and an antinode at the open end. because of this, only odd harmonics are allowed.
+
+The corresponding resonant frequencies are given by
+\begin{equation}
+f_n = \frac{(2n - 1)v}{4L},
+\end{equation}
+where $v$ is the speed of sound in air.
+
+\subsection{Acoustic Impedance and Partial Reflection}
+
+In real systems, discontinuities such as baffles or changes in geometry introduce acoustic impedance mismatches.
+
+At an interface between two regions of differing impedance, part of the wave is transmitted and part is reflected.
+These partial reflections modify the standing wave pattern and shift the resonant frequencies away from the values predicted for uniform tubes.
+
+\subsection{Coupled Resonator System}
+
+The experimental setup consists of two sections of tube separated by a baffle. One section is cut at a location where there would be a node or antinode depending on the orientation of the coupled system. When the baffle is closer to the closed end it is positioned on an antinode, shifting the frequencies, and when it is on the far end it is on a node, resulting in very slight shift in frequencies.
+\subsection{Effect of Boundary Condition Reversal}
+
+In this experiment, two configurations are considered: one in which the longer section is closed, and another in which the shorter section is closed. Changing which end is closed alters the boundary conditions of the system, thereby modifying the allowed standing wave solutions.
+
+Because the boundary condition at the closed end enforces a displacement node, switching the closed end effectively changes the spatial distribution of nodes and antinodes throughout the system. Consequently, the resonant frequencies and mode shapes differ between the two configurations.
+
+\subsection{Summary}
+
+The observed wave behavior in this system come from:
+\begin{itemize}
+    \item Boundary conditions at open and closed ends,
+    \item Acoustic impedance mismatches at the baffle,
+    \item Coupling between two resonant sections,
+\end{itemize}
+
+These effects combine to produce deviations from the simple harmonic structure of an ideal open-closed tube, including shifted resonant frequencies, altered mode shapes, and variations in amplitude distribution.
 \section{Experimental apparatus and set up, Data Acquisition, and Collected Data}
-	The setup was a speaker using digilent waveforms software, swept frequencies of 50Hz-1KHz pointed at a resonator with one closed end and later both ends closed. Data collection was done with a microphone. Data analysis of the wav files generated by audacity
+Using the digilent waveforms software's oscilliscope function we were able to experimentally find resonant frequencies in all configurations of the tube. The experimental apparatus consisted of a cylindrical tube divided into two sections by a rigid internal baffle. One section was constructed to have a length corresponding to approximately $\frac{3}{2}\lambda$ for a target frequency, while the other section extended the total length of the system.
+
+Three configurations were investigated: (1) The full length of the open-closed tube unobstructed.(2) the longer section terminated by the baffle while the shorter section remained open, and (3) the shorter section terminated while the longer section remained open. In each configuration, the closed end enforced a displacement node, while the open end allowed a displacement antinode.
+
+Acoustic excitation was generated by striking the closed end of the tube. This generated a pressure pulse containing a wide range of frequencies, allowing the natural resonant modes of the tube to be excited simultaneously.
+
+A microphone was positioned at the open end of the tube recording the resulting acoustic signal. The recorded signal was then analyzed to identify dominant resonant frequencies. Fourier transform techniques were used to convert the signal into the frequency domain and graphed through python, enabling identification of peaks corresponding to standing wave modes.
+
+Multiple trials were conducted for each boundary condition configuration to ensure reproducibility of the measured resonant frequencies.
+\end{Experimental apparatus and set up, Data Aquisition, and Collected Data}
+\section{Computational Modeling}
+
+In addition to the experimental measurements, numerical simulations of the acoustic field were performed using a finite element approach. The geometry of the open-closed tube system, including the internal baffle, was constructed and meshed using Gmsh, and the resulting mesh was imported into SfePy to solve the governing equations.
+
+\subsection{Geometry and Meshing}
+
+The resonator geometry was defined as a 2D cylindrical domain consisting of one tube containing baffle at about 75 percent of the length of the tube to match the experiment.
+
+The geometry was discretized into a finite element mesh using Gmsh. A sufficiently fine mesh was used (with higher mesh detail around areas of interest) to resolve acoustic wavelengths of interest.
+
+\subsection{Governing Equation}
+
+The acoustic behavior in the frequency domain was modeled using the Helmholtz equation for the pressure field $p(\mathbf{r})$:
+\begin{equation}
+\nabla^2 p + k^2 p = 0,
+\end{equation}
+where $k = \frac{2\pi f}{v}$ is the wavenumber, $f$ is frequency, and $v$ is the speed of sound in air.
+
+\subsection{Boundary Conditions}
+
+Boundary conditions were applied to match the experimental configurations:
+
+\begin{itemize}
+    \item \textbf{Closed end:} A rigid boundary condition was imposed, corresponding to zero normal velocity:
+    \begin{equation}
+    \frac{\partial p}{\partial n} = 0.
+    \end{equation}
+    
+    \item \textbf{Open end:} An approximate pressure-release condition was used:
+    \begin{equation}
+    p = 0,
+    \end{equation}
+    representing a pressure node at the open end.
+    
+    \item \textbf{Baffle interface:} The baffle was modeled as a boundary
+\end{itemize}
+
+\subsection{Numerical Implementation}
+
+The finite element formulation was implemented in SfePy by constructing the weak form of the Helmholtz equation:
+\begin{equation}
+\int_{\Omega} \nabla p \cdot \nabla q \, d\Omega - k^2 \int_{\Omega} p q \, d\Omega = 0,
+\end{equation}
+where $q$ is a test function.
+
+Eigenfrequency analysis was performed to determine the resonant modes of the system. 
 
 \section{Analysis}
-	How did you analyze the data to answer the research question? Explain. This should be clear and complete enough that the reader could reproduce your results. You may link to notebooks that do the actual analysis. Describe how you estimated the uncertainty in the results. This can often be the most extensive section in the paper because the quality and value of the results depends on the care with which you perform the analysis. Give the reader reasons to feel confidence in the correctness of your results, and the ensuing assertions you make based on those results.
+
+The simulated resonant frequencies and mode shapes were compared with experimental measurements obtained from the microphone data. The numerical model for the non baffle system produced values that closely matched the experimental frequencies. When introducing the baffle to the model, the shifted frequencies were not as close to the expected values as they were without the baffle, but the overall trend was conserved.
+
+
+
+Quantitative discrepancies between simulation and experiment are attributed to factors such as viscous losses, imperfect boundary conditions, and simplifications in modeling the baffle. In particular, the assumption of an ideal pressure-release condition at the open end neglects end correction effects, which can shift resonant frequencies. Imperfections in the experimental geometry could also play a role.
 
 \section{Discussion}
-	What did you learn from the data? How was the result significant? How does the result relate to the original research question? What future improvements can you suggest, and why? These are the kinds of questions answered in this section. This is where you make your final claims about the results you produced, where you pull everything together. This is the grand finale!
+The finite element model provides a useful framework for understanding the effects of geometry and boundary conditions on standing wave behavior. By combining Gmsh for mesh generation and SfePy for numerical solution, the experiment can be interpreted in terms of the Helmholtz equation with realistic boundary constraints, offering insight into the resonator dynamics observed experimentally.
+
+\section{Analysis}
+
     
 \section{Format}
 	The goal for this course is not only for you to engage in more in-depth experimental work, but also to prepare you to create publication quality reports using the same tools used by professionals in the field. This means you'll be learning some new tools!
@@ -56,6 +162,16 @@
 
 	% This is how you define a table: the [h!bt] means that LaTeX is forced (by the !) to place the table exactly here (by h), or if that doesnt work because of a pagebreak or something, it tries to place the table to the bottom of the page (by b) or the top (by t).
 
+	\begin{table}[]
+	\begin{tabular}{|l|c|c|c|c|c|c|}
+	\hline
+	\multicolumn{1}{|c|}{\textbf{\begin{tabular}[c]{@{}c@{}}Harmonics\\ (odd nodes)\end{tabular}}} & \textbf{\begin{tabular}[c]{@{}c@{}}Frequency calculation (Simple)\\ (Hz)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Experimental Frequencies\\ Full Tube\\ (Hz)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Experimental Frequencies\\ Baffle at theoretical node\\ (Hz)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Experimental Frequencies\\ Baffle at theoretical anti node\\ (Hz)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Frequency Calculations via Sfepy Model\\ No Baffle\\ (Hz)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Frequency Calculations via Sfepy Model\\ Baffle\\ (Hz)\end{tabular}} \\ \hline
+	\textbf{1}                                                                                     & 195.002                                                                                & \cellcolor[HTML]{FFFFFF}183.352                                                              & \cellcolor[HTML]{FFFFFF}177.24                                                                                & \cellcolor[HTML]{FFFFFF}226.134                                                                                    & \cellcolor[HTML]{FFFFFF}195.003                                                                            & \cellcolor[HTML]{FFFFFF}180.756                                                                         \\ \hline
+	\textbf{3}                                                                                     & 585.007                                                                                & \cellcolor[HTML]{FFFFFF}568.39                                                               & \cellcolor[HTML]{FFFFFF}562.278                                                                               & \cellcolor[HTML]{FFFFFF}513.385                                                                                    & \cellcolor[HTML]{FFFFFF}585.021                                                                            & \cellcolor[HTML]{FFFFFF}575.194                                                                         \\ \hline
+	\textbf{5}                                                                                     & 975.012                                                                                & \cellcolor[HTML]{FFFFFF}941.205                                                              & \cellcolor[HTML]{FFFFFF}873.976                                                                               & \cellcolor[HTML]{FFFFFF}843.418                                                                                    & \cellcolor[HTML]{FFFFFF}975.075                                                                            & \cellcolor[HTML]{FFFFFF}953.008                                                                         \\ \hline
+	\textbf{7}                                                                                     & 1365.016                                                                               & \cellcolor[HTML]{FFFFFF}1369.026                                                             & \cellcolor[HTML]{FFFFFF}1320                                                                                  & \cellcolor[HTML]{FFFFFF}1314.02                                                                                    & \cellcolor[HTML]{FFFFFF}1365.190                                                                           & \cellcolor[HTML]{FFFFFF}1261.301                                                                        \\ \hline
+	\end{tabular}
+	\end{table}
 	\begin{table}[h!bt]
 		% Center the table
 		\begin{center}
