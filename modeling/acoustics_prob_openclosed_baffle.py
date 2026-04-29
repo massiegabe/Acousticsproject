@@ -39,7 +39,7 @@ def baffle_verts(coors, domain=None):
     MUST match geometry parameters in.geo file.
     """
     lambda_val = 439.73837948/1000     # <-- same as .geo
-    xb = 0.75 * 439.73837948/1000  # 3/2 lambda location
+    xb = 0.33 * 439.73837948/1000  # 3/2 lambda location
     t = 50.125/2   /1000           # thickness
     y_gap = 15 /1000   # opening height
 
@@ -53,7 +53,9 @@ def baffle_verts(coors, domain=None):
 # ------------------------------------------------------------
 # Mesh file
 # ------------------------------------------------------------
-filename_mesh = 'new_tube19.mesh'
+filename_mesh = 'testing.mesh'
+"filename_mesh = 'ineff_baffle.mesh'"
+"filename_mesh = 'new_tube19.mesh'"
 "filename_mesh = 'new_tube_2d.mesh'"
 
 

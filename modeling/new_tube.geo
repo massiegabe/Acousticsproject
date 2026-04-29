@@ -10,7 +10,7 @@ lc = 0.005;   // mesh size
 t = 10/1000; 
 
 // Baffle position (3/2 lambda from left end)
-xb = 0.75 * L;
+xb = 0.33 * L;
 
 // Baffle vertical extent 
 y_gap = (15)/1000;
