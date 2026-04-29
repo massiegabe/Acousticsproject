@@ -1,6 +1,6 @@
 import numpy as np
 # ------------------------------------------------------------
-# Speed of sound (m/s)
+# Speed of sound (m/s) — mesh is in metres
 # ------------------------------------------------------------
 c_sound = 343.0
 
@@ -18,22 +18,33 @@ def get_r_dependence(ts, coors, mode=None, **kwargs):
         return {'val': val}
 
 
-# Region selector functions (coordinate-based, robust across SfePy versions)
+# Region selector functions — coordinates are in metres.
+# Geometry (from long_tube_wm.geo, converted mm→m):
+#   half-length  l = 0.2955 m  (x from -0.2955 to +0.2955)
+#   outer radius r = 0.02615 m
+#   baffle inner a = 0.011925 m  at x = ±0.005963 m
+
 def axis_verts(coors, domain=None):
-    return np.where(coors[:, 1] < 1e-10)[0]
+    """Bottom edge: y = 0 (axis of symmetry)."""
+    return np.where(coors[:, 1] < 1e-6)[0]
 
 def open_verts(coors, domain=None):
-    return np.where(coors[:, 0] > 0.569)[0]
+    """Right face: x ≈ +0.2955 m (pressure-release open end)."""
+    return np.where(coors[:, 0] > 0.294)[0]
 
 def wall_verts(coors, domain=None):
-    return np.where(coors[:, 1] > 0.0349)[0]
+    """Outer wall and baffle surfaces (rigid, Neumann — natural BC)."""
+    top  = coors[:, 1] > 0.025                      # outer wall y ≈ 0.02615
+    baf  = (np.abs(coors[:, 0]) < 0.007) & (coors[:, 1] > 0.011)  # baffle faces
+    return np.where(top | baf)[0]
 
 def closed_verts(coors, domain=None):
-    return np.where(coors[:, 0] < 1e-10)[0]
+    """Left face: x ≈ -0.2955 m (rigid closed end — natural BC)."""
+    return np.where(coors[:, 0] < -0.294)[0]
 
 
 # Mesh file
-filename_mesh = 'newtubenobaffle_2d.mesh'
+filename_mesh = 'long_tube_wm.mesh'
 
 
 # Options
@@ -43,22 +54,21 @@ options = {
     'post_process_hook_final': 'print_frequencies',
 }
 
-# Regions
+# Regions — inline coordinate expressions (mesh is in metres after mm→m conversion).
+# Geometry:  x in [-0.2955, +0.2955],  y in [0, 0.02615]
+# Boundary regions must use the ('select', 'facet') tuple form so sfepy
+# creates a facet-kind region rather than trying to find complete cells.
 regions = {
     'Omega'  : 'all',
-    'Axis'   : 'cells of group 2',
-    'Open'   : 'cells of group 3',
-    'Wall'   : 'cells of group 4',
-    'Closed' : 'cells of group 5',
+    'Axis'   : ('vertices in (y < 1e-6)',    'facet'),  # y = 0  (axis of symmetry)
+    'Open'   : ('vertices in (x > 0.294)',   'facet'),  # x ≈ +0.2955  (open end)
+    'Wall'   : ('vertices in (y > 0.025)',   'facet'),  # y ≈ 0.02615  (outer wall)
+    'Closed' : ('vertices in (x < -0.294)', 'facet'),  # x ≈ -0.2955  (closed end)
 }
 
-# Functions,materials
+# Functions, materials
 functions = {
     'get_r_dependence': (get_r_dependence,),
-    'axis_verts':       (axis_verts,),
-    'open_verts':       (open_verts,),
-    'wall_verts':       (wall_verts,),
-    'closed_verts':     (closed_verts,),
 }
 
 materials = {
@@ -80,8 +90,8 @@ variables = {
 
 
 # Boundary conditions
-# Open end = pressure = 0
-# Closed end = natural Neumann
+# Open end = pressure = 0 (pressure-release)
+# Closed end + walls = natural Neumann (zero normal velocity)
 ebcs = {
     'open_bc': ('Open', {'Psi.0': 0.0}),
 }

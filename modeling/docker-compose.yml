@@ -1,7 +1,10 @@
 services:
   sfepy:
     image: sfepy/sfepy-desktop:latest
+    platform: linux/amd64
     ports:
       - "3000:3000"
+    environment:
+      - TERM=xterm-256color
     volumes:
       - .:/home/sfepy/work
